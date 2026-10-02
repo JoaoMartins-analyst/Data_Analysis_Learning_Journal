@@ -221,3 +221,4 @@ I retained the main concepts well. My biggest challenge was expressing the logic
 - Reinforced many-to-one lookup direction: each transaction can safely retrieve attributes from a unique master record, while `XLOOKUP` should not collapse multiple matching transaction rows.
 - Revisited inclusive date calculations, formatting vs `ROUND`, absolute references, structured references, and dynamic-array spilling.
 - Reinforced `FILTER` + `SORT`, Boolean conditions, and spill-range references such as `G2#`.
+- Main retrieval gaps: exact syntax for older formulas, current-row structured references, and distinguishing table propagation from dynamic-array spilling.
