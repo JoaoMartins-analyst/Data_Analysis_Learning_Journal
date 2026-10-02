@@ -217,3 +217,12 @@ The review exposed a real misunderstanding about `LIMIT` and `OFFSET`. I also le
 - Learned `DEFAULT` as the value used when a column value is omitted, not proof that the value is factually correct.
 - Reinforced the distinction between schema changes (`CREATE` / `ALTER`) and data changes (`INSERT` / `UPDATE` / `DELETE`).
 
+## Day 21 - SQL
+
+- Completed SQLBolt through Lesson 18.
+- Used integrated retrieval across joins, aggregation, `WHERE`, `GROUP BY`, `HAVING`, `IN`, `ORDER BY`, `LIMIT`, and zero-match `LEFT JOIN` logic.
+- Learned `DROP TABLE` to remove an entire table and distinguished it from `DELETE`, which removes rows while preserving the table.
+- `IF EXISTS` prevents an error when the target table is already absent, but destructive commands should still be verified carefully before execution.
+- Reinforced the workflow of inspecting targets with `SELECT` before `UPDATE`, `DELETE`, or other destructive operations.
+- SQL concepts and command selection are stronger than exact syntax retrieval, especially for the newer `INSERT` / `UPDATE` / `DELETE` / `CREATE` / `ALTER` / `DROP` statements.
+
