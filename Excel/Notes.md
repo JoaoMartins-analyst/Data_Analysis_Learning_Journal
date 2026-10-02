@@ -222,3 +222,12 @@ I retained the main concepts well. My biggest challenge was expressing the logic
 - Revisited inclusive date calculations, formatting vs `ROUND`, absolute references, structured references, and dynamic-array spilling.
 - Reinforced `FILTER` + `SORT`, Boolean conditions, and spill-range references such as `G2#`.
 - Main retrieval gaps: exact syntax for older formulas, current-row structured references, and distinguishing table propagation from dynamic-array spilling.
+
+## Day 21 - Excel
+
+- Used broad Month 1 retrieval covering `SUMIFS`, `COUNTIFS`, dates, conditional formatting, lookups, structured references, and grouped reporting.
+- Recovered `EDATE`, `EOMONTH`, mixed/absolute references, and multi-condition aggregation cleanly.
+- Reinforced lookup vs aggregation and many-to-one lookup direction between transaction and master tables.
+- Reinforced that calculated columns inside Excel Tables use current-row references such as `[@ProductID]`, while whole-column array formulas are used for spilling outside Tables.
+- Main remaining weakness is exact syntax retrieval rather than identifying which Excel tool fits the business problem.
+
