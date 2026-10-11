@@ -1,32 +1,24 @@
-##  Day 1
+# SQL — Learning Notes
 
+> Reviewed 11 October 2026. Historical reflections are retained, with technical wording corrected for the current MySQL work. These edits are reference corrections, not new assessment passes. See [exercise records](Exercises.md).
 
+## Day 1
 
-- I learned how to use the select and where functions, along with operators like BETWEEN/NOT BETWEEN, AND/OR, IN/NOT IN and =,!=,<,<=,>,>=
+- I learned the `SELECT` statement and its `WHERE` clause, with operators such as `BETWEEN` / `NOT BETWEEN`, `AND` / `OR`, `IN` / `NOT IN`, `=`, `!=`, `<`, `<=`, `>` and `>=`. `SELECT` and `WHERE` are not functions.
 
 - Practiced and completed a few exercises using this knowledge.
 
-
-
 ## Day 2
 
+- `=` tests equality. For text, case/accent sensitivity depends on the database collation; it does not necessarily mean a case-sensitive character-for-character match.
 
+- `LIKE` matches a pattern; text comparison still depends on the collation.
 
-- = means EXACT match
-
-- LIKE means PATTERN match
-
-- % means "anything can go here"
-
-
+- Inside a `LIKE` pattern, `%` matches zero or more characters and `_` matches one character. Outside a pattern, `%` can be a numeric modulo operator.
 
 ## Day 3
 
-
-
 I learned:
-
-
 
 - WHERE filters data based on conditions.
 
@@ -34,23 +26,17 @@ I learned:
 
 - LIMIT restricts the number of rows returned.
 
-- Typical query flow:
+- Written clause order for this simple query (not its logical evaluation order):
 
-&#x20; SELECT → FROM → WHERE → ORDER BY → LIMIT
+`SELECT → FROM → WHERE → ORDER BY → LIMIT`
 
 - Before writing SQL, define the business question you are trying to answer.
 
 - The same SQL concept can be explained differently depending on the audience (business vs. technical).
 
-
-
 ## Day 4
 
-
-
 - Reviewed SQLBolt Lesson 4 after realizing my mistake wasn't SQL syntax but requirement interpretation.
-
-
 
 ### Key takeaways
 
@@ -60,9 +46,7 @@ I learned:
 
 - Always ask: "First according to what?"
 
-
-
-\### Reflection
+### Reflection
 
 A wrong answer doesn't always mean I misunderstood SQL. Sometimes I simply interpreted the business requirement differently. Finding the exact misunderstanding is part of becoming a better analyst.
 
@@ -88,7 +72,7 @@ Reviewed filtering, sorting, pagination, and joins through a boss battle.
 - `LIMIT` and `OFFSET` work together to select a section of an ordered result.
   - `OFFSET` decides where the section begins.
   - `LIMIT` decides how many rows are returned.
-- The base table should be chosen by the result's grain: what one returned row represents.
+- Choose a base population that preserves the entities required by the question, and separately define the final result grain. Later joins and grouping can change how many rows each entity produces.
 - `JOIN` combines related data from different tables.
 - `ON` matches rows by comparing related key values.
 - `JOIN` normally means the same as `INNER JOIN`.
@@ -100,7 +84,7 @@ The review exposed a real misunderstanding about `LIMIT` and `OFFSET`. I also le
 
 ## Day 7
 
-- Learned that `LEFT OUTER JOIN` and `RIGHT OUTER JOIN` keep all rows from one selected table, while `FULL OUTER JOIN` keeps all matching and unmatched rows from both tables.
+- Learned the outer-join concepts: LEFT/RIGHT preserve the selected side; FULL preserves both sides. MySQL has no native `FULL OUTER JOIN` syntax. Later filters can still remove preserved rows, so a `WHERE` condition on the nullable side needs care.
 - When an outer join preserves a row without a match, the missing side’s columns contain `NULL`.
 - Practiced choosing the simplest query based on the requirement instead of forcing the newest SQL concept into every solution.
 
@@ -108,7 +92,7 @@ The review exposed a real misunderstanding about `LIMIT` and `OFFSET`. I also le
 
 - Learned that `NULL` represents missing or unknown information rather than an ordinary value.
 - Used `IS NULL` and `IS NOT NULL` because ordinary comparisons such as `= NULL` do not work.
-- Practiced using `NULL` to identify matched and unmatched rows after an outer join.
+- Practiced detecting unmatched rows after an outer join by checking a right-side key that cannot be NULL in a real matched record. A nullable descriptive field alone cannot prove that no match exists.
 - Learned that joined queries can qualify columns with full table names or shorter table aliases for clarity.
 
 ## Day 9
@@ -168,7 +152,7 @@ The review exposed a real misunderstanding about `LIMIT` and `OFFSET`. I also le
 
 - Completed SQLBolt Lesson 12.
 - Reinforced SQL's conceptual execution order: FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT/OFFSET.
-- Learned why SELECT aliases are usually unavailable in WHERE/HAVING but can normally be used in ORDER BY.
+- A SELECT-list alias is not available to `WHERE`. MySQL does allow aliases in `GROUP BY`, `HAVING` and `ORDER BY`; other SQL dialects differ. The conceptual order is a reasoning model, not a promise about the optimizer’s physical execution order.
 - Practiced combining JOIN, WHERE, GROUP BY, SUM, AVG, COUNT, and HAVING.
 - Reinforced that WHERE filters source rows while HAVING filters aggregated groups.
 - Misread a requirement asking for combined domestic + international sales as two separate totals; corrected the interpretation.
@@ -195,7 +179,7 @@ The review exposed a real misunderstanding about `LIMIT` and `OFFSET`. I also le
 - Learned `UPDATE` to modify existing values and `DELETE` to remove rows.
 - `WHERE` determines which rows are affected; omitting it can modify or delete the entire table.
 - Practiced verifying destructive conditions with `SELECT` before executing them.
-- To remove one field value while keeping the row, use `UPDATE ... SET column = NULL`.
+- To clear a field while keeping its row, `UPDATE ... SET column = NULL` is appropriate only if the column permits NULL and that matches the business rule; use a deliberate `WHERE` condition.
 - Learned to escape apostrophes inside SQL strings by doubling them, for example `'O''Brien'`.
 - Reinforced the higher data-integrity risk of SQL commands that modify stored data.
 
@@ -223,6 +207,29 @@ The review exposed a real misunderstanding about `LIMIT` and `OFFSET`. I also le
 - Used integrated retrieval across joins, aggregation, `WHERE`, `GROUP BY`, `HAVING`, `IN`, `ORDER BY`, `LIMIT`, and zero-match `LEFT JOIN` logic.
 - Learned `DROP TABLE` to remove an entire table and distinguished it from `DELETE`, which removes rows while preserving the table.
 - `IF EXISTS` prevents an error when the target table is already absent, but destructive commands should still be verified carefully before execution.
-- Reinforced the workflow of inspecting targets with `SELECT` before `UPDATE`, `DELETE`, or other destructive operations.
+- Before `UPDATE` or `DELETE`, preview the intended rows with `SELECT` using the same condition. For `DROP` / `ALTER`, inspect the schema and dependencies and practise on a disposable copy. MySQL DDL can implicitly commit; a `SELECT` preview or planned `ROLLBACK` is not sufficient protection.
 - SQL concepts and command selection are stronger than exact syntax retrieval, especially for the newer `INSERT` / `UPDATE` / `DELETE` / `CREATE` / `ALTER` / `DROP` statements.
 
+## Review reference — 11 October 2026
+
+These additions clarify the existing lessons; they do not add a new course or require repeating SQLBolt.
+
+- `COUNT(*)` counts result rows. `COUNT(column)` counts non-NULL values in that column. After a LEFT JOIN, count a non-nullable right-side key to report zero matches.
+- `SUM` and `AVG` ignore NULL inputs. Replacing a missing value with zero changes its meaning and, for an average, its denominator. Use `COALESCE` only when the agreed rule permits that interpretation.
+- `NOT IN` can produce unexpected unknown results if its compared list/subquery includes NULL. In Phase 1B, practise `NOT EXISTS` for appropriate “no matching row” questions.
+- `ORDER BY amount DESC, id ASC` makes ties deterministic when `id` is unique. `LIMIT`/`OFFSET` alone do not define which rows are first.
+- Joining two one-to-many datasets can multiply rows. Check keys, row counts and source totals before accepting an aggregate, including one generated by AI.
+- Write complete executable queries in exercises. The archive contains reflections but no saved `.sql` submissions, so the review cannot independently validate earlier query execution.
+
+### Source references
+
+- [MySQL 8.4 — aliases](https://dev.mysql.com/doc/refman/8.4/en/problems-with-alias.html).
+- [MySQL 8.4 — JOIN syntax](https://dev.mysql.com/doc/refman/8.4/en/join.html).
+- [MySQL 8.4 — string comparison and collations](https://dev.mysql.com/doc/refman/8.4/en/case-sensitivity.html).
+- [MySQL 8.4 — pattern matching](https://dev.mysql.com/doc/refman/8.4/en/pattern-matching.html).
+- [MySQL 8.4 — aggregate functions](https://dev.mysql.com/doc/refman/8.4/en/aggregate-functions.html).
+- [MySQL 8.4 — implicit commits](https://dev.mysql.com/doc/refman/8.4/en/implicit-commit.html).
+
+### Future session record
+
+Keep concepts and reflections here. Save full questions, queries, expected/actual results and corrections in [Exercises.md](Exercises.md), with executable files in [queries](queries/README.md). Record AI help and independent assessment status separately.

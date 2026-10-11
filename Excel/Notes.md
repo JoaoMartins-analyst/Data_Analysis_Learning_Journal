@@ -1,18 +1,16 @@
+# Excel — Learning Notes
+
+> Reviewed 11 October 2026. Daily reflections are retained, with technical wording corrected. Review additions are reference material, not newly completed study or assessment results. See [exercise evidence](Exercises.md) and the [workbook review](Workbook-Review.md).
+
 ## Day 1
 
+- I learned spreadsheet formatting and `XLOOKUP`. The saved gradebook uses a lookup table; a lookup table is not the same thing as a PivotTable. My later PivotTable work is recorded under Day 14.
 
+- I learned to distinguish aggregation from output shape. `SUM` aggregates values; a formula can return one value or spill several. In my gradebook, `BYROW`, `BYCOL` and array-input `XLOOKUP` spill multiple results.
 
-- I learned to format tables, pivot tables and functions. I also learned XLOOKUP.
-
-- I learned about the difference about aggregate, single output and spilled array formula.
-
-- I built and formatted a functional table and pivot table with this knowledge.
-
-
+- I built and formatted a gradebook and used its lookup table to convert percentage grades into decimal grades.
 
 ## Day 2
-
-
 
 What I remembered easily:
 
@@ -24,9 +22,7 @@ What I remembered easily:
 
 - XLOOKUP and how to retrieve information from outside tables
 
--. the use of F2 to edit a cell and F4 to make a cell's value absolute when using a function with an array of cells
-
-
+- `F2` edits a cell. While editing a formula, `F4` cycles a selected reference through relative, absolute and mixed forms such as `A1`, `$A$1`, `A$1` and `$A1`. It anchors the reference, not the cell’s value.
 
 What I had to think about:
 
@@ -34,15 +30,13 @@ What I had to think about:
 
 - Column organization
 
-
-
 ## Day 3
 
 What I learned:
 
-- COUNT counts numeric cells only.
+- `COUNT(range)` counts numeric cells, including real Excel dates/times; numbers stored as text in that range are not counted.
 
-- COUNTA counts all non-empty cells.
+- `COUNTA(range)` counts non-empty cells, including errors and formulas returning `""`; it is not a general-purpose word count.
 
 - ROWS counts the number of rows, regardless of contents.
 
@@ -50,33 +44,27 @@ What I learned:
 
 - Dynamic arrays spill automatically; use # to reference the entire spill range.
 
-- SORT(UNIQUE(...)) is generally more efficient than UNIQUE(SORT(...)) because duplicates are removed before sorting.
+- `SORT(UNIQUE(...))` expresses “remove duplicates, then sort”. Both orders can produce the same sorted unique list; I should not claim a universal speed advantage without measuring the actual workbook.
 
 - Think in terms of business problems first, formulas second.
-
-
 
 ## Day 4
 
 Focused on understanding the logic behind array formulas instead of learning new functions.
 
-
-
 ### Key takeaways
 
-- `IF` does not perform the logical test—it only decides what to return based on TRUE/FALSE.
+- `IF(logical_test, value_if_true, value_if_false)` evaluates the supplied test and selects a result. Comparisons such as `A2>=100` form the test; `IF` maps its result to the required output.
 
-- `+` works as OR, `\*` works as AND.
+- In element-by-element Boolean arithmetic, `*` implements AND. Adding conditions implements OR only when the sum is treated as “greater than zero” or passed as the test to `IF`/`FILTER`. A raw sum can be 2 when both conditions are true.
 
 - Parentheses change the meaning of logical expressions (same principle as PEMDAS).
 
 - Before choosing a formula, think about the business logic:
 
-&#x20; - If conditions cannot overlap (e.g. 2024 OR 2025), separate `COUNTIFS` + addition is fine.
+  - If conditions cannot overlap (e.g. 2024 OR 2025), separate `COUNTIFS` + addition is fine.
 
-&#x20; - If conditions can overlap (e.g. 2024 OR Product = "Razer"), use logical array formulas to avoid double-counting.
-
-
+  - If conditions can overlap (e.g. 2024 OR Product = "Razer"), use logical array formulas to avoid double-counting.
 
 ### Reflection
 
@@ -84,7 +72,7 @@ Today's biggest improvement wasn't learning a new function—it was learning to 
 
 ## Day 5
 
-- - Repeated Day 3's homework as a retrieval exercise. I made a few logical mistakes, but identified and corrected them independently because I understood what each formula was instructing Excel to do.
+- Repeated Day 3's homework as a retrieval exercise. I made a few logical mistakes, but identified and corrected them independently because I understood what each formula was instructing Excel to do.
 
 ## Day 6 — Weekly Review
 
@@ -92,9 +80,9 @@ Reviewed logical array formulas through retrieval and mixed business questions.
 
 ### Key takeaways
 - Logical tests return TRUE/FALSE values.
-- `+` represents OR and `*` represents AND.
+- For aligned Boolean arrays, `*` represents AND. For OR, normalize an added mask with `>0` or use it as an `IF`/`FILTER` condition; summing the raw mask can double-count overlaps.
 - Parentheses determine which conditions belong together.
-- `IF` converts any non-zero logical result into the chosen output.
+- `IF` treats a numeric zero test as FALSE and a non-zero numeric test as TRUE; the selected branch supplies the output. This is why `SUM(IF(condition1+condition2,1,0))` counts each qualifying row once.
 - When OR conditions can overlap, separate counts may double-count the same row.
 - Text criteria such as `"Portugal"` and `"Razer"` require quotation marks.
 
@@ -112,8 +100,7 @@ I retained the main concepts well. My biggest challenge was expressing the logic
 - Learned how Excel stores dates as whole numbers and times as fractions of a day.
 - Practiced calculating date durations, including using `+1` when both the start and end dates must be counted.
 - Used `EDATE` to move a date by a number of months and `EOMONTH` to return the final day of a month.
-- Calculated working hours by subtracting times and multiplying by 24, and used `MOD(...,1)` to handle shifts that cross midnight.
-
+- Calculated hours as `(end-start)*24`. For time-only inputs and a known duration below 24 hours, `MOD(end-start,1)*24` handles one midnight crossing. For full date-time values, use the direct difference; `MOD(...,1)` would discard whole days and can conceal reversed inputs.
 
 ## Day 9
 
@@ -129,7 +116,7 @@ I retained the main concepts well. My biggest challenge was expressing the logic
 - Reviewed date and time logic, including inclusive date counting, `EDATE`, `EOMONTH`, and how Excel stores time as fractions of a day.
 - Reinforced `IF`, `IFNA`, `ISNUMBER`, `ISTEXT`, and mixed AND/OR logic using `*`, `+`, and parentheses.
 - Confirmed that `IFNA` should preserve the original result unless the formula returns `#N/A`.
-- Reinforced the difference between a technical result and a business rule: `#N/A` means a lookup failed, while what to do with that result depends on the business requirement.
+- Reinforced the difference between a technical result and a business rule: `#N/A` often means a lookup found no match, but can also arise elsewhere. I should identify its cause before applying the business rule; missing information is not automatically zero.
 - Revisited result grain: one row should represent the entity the business question is asking about.
 
 ## Day 11 — Lookup, Filter and Selection Functions
@@ -185,7 +172,7 @@ I retained the main concepts well. My biggest challenge was expressing the logic
 - Learned that `GROUPBY` can use multiple row fields; multiple dimensions do not automatically require `PIVOTBY`.
 - `PIVOTBY` is mainly useful when a dimension needs to be displayed across columns or when a PivotBy-specific feature is required.
 - Practiced `PERCENTOF`, Data Validation dropdowns, text-number coercion with `+0` / `--`, and chart number/date formatting.
-- Checked the homework answer workbook and found that its chart skips several summary rows and its source Units data differs from the homework dataset.
+- Recorded during that session: the homework answer chart skipped several summary rows and its source Units data differed from the homework dataset. That Lesson 9 workbook is not included in the 11 October review, so this historical observation was not independently rechecked here.
 
 ## Week 4 Boss Battle — Excel
 
@@ -211,7 +198,7 @@ I retained the main concepts well. My biggest challenge was expressing the logic
 
 - Used a longer integrated retrieval block to revisit older Month 1 material before the project.
 - Reinforced lookup vs aggregation: `XLOOKUP` retrieves one matching record, while `SUMIFS` / `GROUPBY` combine multiple qualifying rows.
-- Revisited overnight time calculations with `MOD` and Boolean logic using `+` for OR and `*` for AND.
+- Revisited `MOD(end-start,1)*24` for time-only shifts below 24 hours, and Boolean masks using normalized `+` for OR and `*` for AND.
 - Reinforced row grain vs detailed value-cell grain and the use of `GROUPBY` for dynamic grouped summaries.
 - Main repair areas: `MOD` syntax, XLOOKUP direction across table grains, and writing full executable formulas.
 
@@ -231,3 +218,39 @@ I retained the main concepts well. My biggest challenge was expressing the logic
 - Reinforced that calculated columns inside Excel Tables use current-row references such as `[@ProductID]`, while whole-column array formulas are used for spilling outside Tables.
 - Main remaining weakness is exact syntax retrieval rather than identifying which Excel tool fits the business problem.
 
+## Review reference — 11 October 2026
+
+These are corrections/additions from the journal review, not a claim that I have completed new exercises.
+
+### Avoid double-counting OR conditions
+
+For two conditions on each source row:
+
+```excel
+=SUM(IF((B2:B665=G20)+(C2:C665=H20),1,0))
+```
+
+This is my existing ExcelBasics02 `HW(3)!H22` approach. It correctly counts 353 qualifying rows, including 56 rows satisfying both conditions only once. Directly summing the two masks would produce 409. A normalized alternative is:
+
+```excel
+=SUM(--(((B2:B665=G20)+(C2:C665=H20))>0))
+```
+
+### Check metric meaning and date boundaries
+
+- A report can calculate exactly what its formula says while answering the wrong business question.
+- In the restaurant mini dataset, €750.59 is average revenue per menu item; `SUM(revenue)/SUM(quantity)` is average revenue per unit sold, about €10.22. Neither is average spend per customer because there are no customer/order counts.
+- The course workbook’s February 2024 report excludes February 29. A robust monthly filter uses `>= month_start` and `< next_month_start`; the full repair is in [Workbook-Review.md](Workbook-Review.md).
+- An average grade based on one recorded assessment is not automatically comparable to one based on five. State the population, denominator, weighting and missing-grade policy.
+
+### Source references
+
+- [Microsoft — IF](https://support.microsoft.com/en-us/excel/functions/if-function): logical tests and selected results.
+- [Microsoft — COUNT](https://support.microsoft.com/en-us/excel/functions/count-function): counts in cell references.
+- [Microsoft — COUNTA](https://support.microsoft.com/en-gb/excel/functions/counta-function): includes empty text returned by formulas.
+- [Microsoft — MOD](https://support.microsoft.com/en-us/excel/functions/mod-function): remainder behaviour; the duration limits above follow from applying it to Excel’s day values.
+- [Microsoft — EOMONTH](https://support.microsoft.com/en-us/excel/functions/eomonth-function): month-end calculation.
+
+### What to save in future sessions
+
+Keep concepts and reflections here. Put the exercise question, attempted formula, observed result, checks, help used and evidence path in [Exercises.md](Exercises.md). A course completion and an independent assessment pass are different records.

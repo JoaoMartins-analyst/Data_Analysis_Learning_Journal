@@ -1,0 +1,30 @@
+# Merge these rules into an existing .gitignore instead of replacing it.
+
+# Private work: public/synthetic datasets are NOT excluded globally.
+private/
+**/data/private/
+**/runs/private/
+
+# Local credentials and environment configuration.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+**/credentials*.json
+
+# Python environments and caches.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Local model weights and temporary office files.
+*.gguf
+~$*
+*.tmp
+.DS_Store
+Thumbs.db
